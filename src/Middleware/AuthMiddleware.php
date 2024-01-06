@@ -12,13 +12,11 @@ class AuthMiddleware
             $decoded = JWT::decode($token, new Key($key, 'HS256'));
             $currentTimestamp = time();
             if ($decoded->exp < $currentTimestamp) {
-                return ['error' => 'Fail validation.'];
-                // exit();
+                throw new \Exception("Fail validation. " );
             }
             return true;
         } catch (\Exception $e) {
-            return ['error' => $e->getMessage()];
-            // exit();
+            throw new \Exception("Error al validar: " . $e->getMessage());
         }
     }
 

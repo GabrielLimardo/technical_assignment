@@ -25,8 +25,7 @@ class Transaction {
             
             return $result;
         } catch (PDOException $e) {
-            // Manejar el error
-            return [];
+            throw new \Exception("Error al obtener la transaction: " . $e->getMessage());
         }
     }
 
@@ -51,8 +50,7 @@ class Transaction {
             return $result;
 
         } catch (PDOException $e) {
-            // Manejar el error
-            return [];
+            throw new \Exception("Error al obtener la transaction: " . $e->getMessage());
         }
     }
 
@@ -67,8 +65,7 @@ class Transaction {
 
             return $stmt->execute();
         } catch (PDOException $e) {
-            // Manejar el error según tus necesidades
-            return false;
+            throw new \Exception("Error al obtener la transaction: " . $e->getMessage());
         }
     }
 
@@ -78,10 +75,9 @@ class Transaction {
             $stmt->bindParam(':username', $username);
             $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result ? $result['id'] : null;  // Devuelve el userId si se encuentra, de lo contrario devuelve null
+            return $result ? $result['id'] : null; 
         } catch (PDOException $e) {
-            // Manejar el error según tus necesidades
-            return null;
+            throw new \Exception("Error al obtener la transaction: " . $e->getMessage());
         }
     }
 }
