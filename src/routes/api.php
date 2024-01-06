@@ -24,7 +24,6 @@ class Api
     {
         $this->tokenValidator = new AuthMiddleware();
 
-        // Define tus rutas aquí
         $this->routes = [
             API_REGISTER_ENDPOINT => ['controller' => new AuthController(), 'method' => 'register', 'request_method' => 'POST'],
             API_LOGIN_ENDPOINT => ['controller' => new AuthController(), 'method' => 'login', 'request_method' => 'POST'],

@@ -12,6 +12,11 @@ class User {
     }
 
     public function register($username, $password) {
+        
+        if (strlen($password) < 8) {
+            throw new Exception("La contraseña debe tener al menos 8 caracteres.");
+        }
+    
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $this->db->getConnection()->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
         $stmt->execute([$username, $hashedPassword]);
@@ -96,6 +101,10 @@ class User {
     }
 
     public function editUser($userId, $newUsername, $newPassword, $newRol) {
+
+        if (strlen($newPassword) < 8) {
+            throw new Exception("La contraseña debe tener al menos 8 caracteres.");
+        }
 
         $sql = "UPDATE users SET username = :username, password = :password WHERE id = :id";
         $stmt = $this->db->getConnection()->prepare($sql);

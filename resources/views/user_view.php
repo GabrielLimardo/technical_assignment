@@ -8,10 +8,8 @@
 
     <h1>User List</h1>
 
-    <!-- Button to go back to home -->
     <button onclick="window.location.href='/technical_assignment/home'">Go Back to Home</button>
 
-    <!-- User List -->
     <ul>
         <?php foreach ($users as $user): ?>
             <li>

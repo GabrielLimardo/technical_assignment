@@ -17,7 +17,12 @@ require_once __DIR__ . '/../controllers/TransactionsController.php';
 require_once __DIR__ . '/../controllers/usersController.php';
 require_once __DIR__ . '/../controllers/Auth/loginController.php';
 require_once __DIR__ . '/../Middleware/AuthMiddleware.php';
-// echo !isset($_SESSION['user_id']);
+
+$requestUri = $_SERVER['REQUEST_URI'];
+if ($requestUri === '/technical_assignment/' | $requestUri === '/technical_assignment') {
+    header('Location:/technical_assignment/home');
+    exit;
+}
 
 class Web
 {

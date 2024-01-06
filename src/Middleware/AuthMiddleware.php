@@ -10,9 +10,7 @@ class AuthMiddleware
 {
     public function validateToken($token) {
         try {
-            $key = base64_decode($token);
             $decoded = JWT::decode($token, new Key(SECRET_KEY, 'HS256'));
-            // var_dump($decoded);
             $currentTimestamp = time();
             if ($decoded->exp < $currentTimestamp) {
                 throw new \Exception("Fail validation. ");
