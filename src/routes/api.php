@@ -12,15 +12,11 @@ $roleController = new RolesController();
 $transactionController = new TransactionController();
 
 $authController = new AuthController();
-
 $tokenValidator = new AuthMiddleware();
 
-$baseUri = '/technical_assignment';
-$token = $headers['Authorization'] ?? null;
 
-//TODO dont work validation
-// $tokenValidator->validateToken($token);
-// echo "Token válido.";
+$baseUri = '/technical_assignment';
+
 
 define('REGISTER_ENDPOINT', $baseUri . '/register');
 define('LOGIN_ENDPOINT', $baseUri . '/login');
@@ -40,11 +36,23 @@ $routes = [
     GET_TRANSACTIONS_BY_DATE_ENDPOINT => ['controller' => $transactionController, 'method' => 'getTransactionsByDate', 'request_method' => 'POST']
 ];
 
+$headers = apache_request_headers();
+$token = $headers['Authorization'] ?? null;
 $routeFound = false;
 header('Content-Type: application/json');
 
 foreach ($routes as $route => $config) {
     if ($_SERVER['REQUEST_URI'] == $route && $_SERVER['REQUEST_METHOD'] == $config['request_method']) {
+        if (in_array($route, [REGISTER_ENDPOINT, CREATE_ROLE_ENDPOINT, ASSIGN_ROLE_ENDPOINT])) {
+
+           
+            $respuesta = $tokenValidator->validateToken($token);
+            
+            if (!$respuesta) {
+                echo json_encode(['error' => 'Validate fail']);
+                exit;
+            }
+        }
         $response = $config['controller']->{$config['method']}();
         $routeFound = true;
         echo json_encode($response);

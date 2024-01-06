@@ -1,5 +1,7 @@
 <?php
 require_once 'vendor/autoload.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../config/Database.php';
 
 use Firebase\JWT\JWT;
 use \Firebase\JWT\Key;
@@ -9,19 +11,22 @@ class AuthMiddleware
     public function validateToken($token) {
         try {
             $key = base64_decode($token);
-            $decoded = JWT::decode($token, new Key($key, 'HS256'));
+            $decoded = JWT::decode($token, new Key(SECRET_KEY, 'HS256'));
+            // var_dump($decoded);
             $currentTimestamp = time();
             if ($decoded->exp < $currentTimestamp) {
-                throw new \Exception("Fail validation. " );
+                throw new \Exception("Fail validation. ");
             }
+            $this->checkAdmin($decoded->user_id);
+
             return true;
         } catch (\Exception $e) {
-            throw new \Exception("Error al validar: " . $e->getMessage());
+            throw new \Exception("Error al validar");
         }
     }
 
-    public static function isAdmin($userId, $pdo) {
-        $stmt = $pdo->prepare("
+    public static function isAdmin($userId, $db) {
+        $stmt = $db->getConnection()->prepare("
             SELECT r.name 
             FROM user_roles ur 
             JOIN roles r ON ur.role_id = r.id
@@ -33,17 +38,17 @@ class AuthMiddleware
         return $stmt->fetch() ? true : false;
     }
 
-    public function checkAdmin() {
-        global $pdo;
-        var_dump($_SESSION['user_id']);
+    public function checkAdmin($user_id) {
+        $db = new Database(); 
 
-        if (isset($_SESSION['user_id'])) {
-            $userId = $_SESSION['user_id'];
-            if (!$this->isAdmin($userId, $pdo)) {
-                return ['error' => 'Fail Rol.'];
+        if (isset($user_id)) {
+            $userId = $user_id;
+            if (!$this->isAdmin($userId, $db)) {
+                throw new \Exception("Fail Admin role check");
             }
         } else {
-            return ['error' => 'Fail Rol.'];
+            return ['error' => 'Fail Admin role check.'];
+
         }
     }
 
