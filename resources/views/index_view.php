@@ -6,17 +6,25 @@
 </head>
 <body>
 
-    <div style="margin-top: 20px;">
-        <form action="/technical_assignment/login" method="get">
-            <input type="submit" value="Login">
-        </form>
-    </div>
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <div style="margin-top: 20px;">
+            <h2>Logged-in User Data:</h2>
+            <p>User ID: <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'N/A'; ?></p>
+            <p>Username: <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'N/A'; ?></p>
+        </div>
+        
+        <a href="/technical_assignment/logout" style="margin-left: 20px;">Log out</a>
 
-    <div style="margin-top: 20px;">
-        <form action="/technical_assignment/transaction" method="get">
-            <input type="submit" value="Create transaction">
-        </form>
-    </div>
+    <?php endif; ?>
+
+    <?php if (!isset($_SESSION['user_id'])): ?>
+
+        <a href="/technical_assignment/login" style="margin-left: 20px;">Login</a>
+
+    <?php endif; ?>
+    
+    <a href="/technical_assignment/transaction" style="margin-left: 20px;">Create transaction</a>
+
 
     <h1>Transactions Table</h1>
     

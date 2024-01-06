@@ -21,7 +21,7 @@
     </style>
 </head>
 <body>
-    <form action="/login" method="post">
+    <form action="/technical_assignment/login_form" method="post">
         <h2>Login</h2>
         
         <!-- Username field -->
@@ -41,10 +41,10 @@
             <input type="submit" value="Login">
         </div>
         
-        <!-- Link to registration page -->
-        <div style="margin-top: 20px;">
-            Don't have an account? <a href="/register">Register</a>
-        </div>
     </form>
+
+
+    <a href="/technical_assignment/home" style="margin-left: 20px;">Home</a>
+
 </body>
 </html>
