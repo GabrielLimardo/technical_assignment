@@ -17,4 +17,13 @@ class Role {
         }
     }
 
+    public function getAllRoles() {
+        try {
+            $stmt = $this->db->prepare("SELECT * FROM roles");
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }

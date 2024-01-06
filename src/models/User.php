@@ -72,4 +72,77 @@ class User {
         $stmt->execute([':user_id' => $userId]);
         return $stmt->fetchColumn();
     }
+
+    public function getAllUsers() {
+        $stmt = $this->db->getConnection()->query("
+        SELECT u.*, r.name as role 
+        FROM users u 
+        JOIN user_roles ru ON u.id = ru.user_id 
+        JOIN roles r ON ru.role_id = r.id
+        ");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getUserById($userId) {
+        $stmt = $this->db->getConnection()->prepare("
+            SELECT u.*, r.name as role 
+            FROM users u 
+            JOIN user_roles ru ON u.id = ru.user_id 
+            JOIN roles r ON ru.role_id = r.id 
+            WHERE u.id = ?
+        ");
+        $stmt->execute([$userId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function editUser($userId, $newUsername, $newPassword, $newRol) {
+
+        $sql = "UPDATE users SET username = :username, password = :password WHERE id = :id";
+        $stmt = $this->db->getConnection()->prepare($sql);
+        
+        $stmt->bindParam(':username', $newUsername, PDO::PARAM_STR);
+        $stmt->bindParam(':password', $newPassword, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
+        
+        $stmt->execute();
+        $stmt->closeCursor();
+        
+        $sqlUpdateRole = "UPDATE user_roles SET role_id = :role WHERE user_id = :id";
+        $stmtUpdateRole = $this->db->getConnection()->prepare($sqlUpdateRole);
+        
+        $stmtUpdateRole->bindParam(':role', $newRol, PDO::PARAM_STR);
+        $stmtUpdateRole->bindParam(':id', $userId, PDO::PARAM_INT);
+        
+        $stmtUpdateRole->execute();
+        $stmtUpdateRole->closeCursor();
+
+        // $stmts = [];
+        // $params = [];
+    
+        // if ($newPassword!=NULL) {
+        //     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        //     $stmts[] = "UPDATE users SET password = ? WHERE id = ?";
+        //     $params[] = $hashedPassword;
+        //     $params[] = $userId;
+        // }
+        // if ($newUsername!=NULL) {
+        //     $stmts[] = "UPDATE users SET username = ? WHERE id = ?";
+        //     $params[] = $newUsername;
+        //     $params[] = $userId;
+        // }
+        // if ($newRol!=NULL) {
+        //     $stmts[] = "UPDATE user_roles SET role_id = (SELECT id FROM roles WHERE name = ?) WHERE user_id = ?";
+        //     $params[] = $newRol;
+        //     $params[] = $userId;
+        // }
+
+        // $this->db->getConnection()->beginTransaction();
+
+        // foreach ($stmts as $index => $sql) {
+        //     $stmt = $this->db->getConnection()->prepare($sql);
+        // }
+
+        // $this->db->getConnection()->commit();
+        // return true;
+    }      
 }

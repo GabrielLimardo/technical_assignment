@@ -15,6 +15,9 @@
         
         <a href="/technical_assignment/logout" style="margin-left: 20px;">Log out</a>
 
+        <a href="/technical_assignment/users" style="margin-left: 20px;">Users</a>
+
+
     <?php endif; ?>
 
     <?php if (!isset($_SESSION['user_id'])): ?>

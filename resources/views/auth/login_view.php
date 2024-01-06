@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <style>
-        /* Simple styles to center the form */
         body {
             display: flex;
             justify-content: center;
@@ -24,19 +23,16 @@
     <form action="/technical_assignment/login_form" method="post">
         <h2>Login</h2>
         
-        <!-- Username field -->
         <div>
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required>
         </div>
         
-        <!-- Password field -->
         <div style="margin-top: 10px;">
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
         </div>
         
-        <!-- Submit button -->
         <div style="margin-top: 20px;">
             <input type="submit" value="Login">
         </div>

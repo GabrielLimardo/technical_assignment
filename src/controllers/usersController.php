@@ -2,29 +2,44 @@
 
 require_once __DIR__ . '/../../config/Database.php';
 require_once __DIR__ . '/../../config/config.php';
-require_once __DIR__ . '/../models/Transaction.php';
+require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Role.php';
 
 class usersController {
 
-    private $transactionModel;
+    private $userModel;
+    private $roleModel;
 
     public function __construct() {
         $db = new Database(); 
-        $this->transactionModel = new Transaction($db->getConnection());
+        $this->userModel = new User($db);
+        $this->roleModel = new Role($db->getConnection());
     }
 
     public function index() {
-        $transactions = $this->transactionModel->getAllTransactions();
-        require_once __DIR__ . '/../../resources/views/index.php';
+        $users = $this->userModel->getAllUsers();
+        $roles = $this->roleModel->getAllRoles();
+        require_once __DIR__ . '/../../resources/views/user_view.php';
     }
 
-    public function filter() {
+    public function show($id) {
+        $user = $this->userModel->getUserById($id);
+        $roles = $this->roleModel->getAllRoles();
 
-        $dateFrom = $_POST['dateFrom'] ?? null;
-        $dateTo = $_POST['dateTo'] ?? null;
-        
-        $transactions = $this->transactionModel->getTransactionsByDate($dateFrom, $dateTo);
+        require_once __DIR__ . '/../../resources/views/user_view.php';
+    }
 
-        require_once __DIR__ . '/../../resources/views/index.php';
+    public function edit() {
+
+        $userId = $_POST['userId'];
+        $newUsername = $_POST['newUsername']?? null;
+        $newPassword = $_POST['newPassword']?? null;
+        $newRole = $_POST['newRole']?? null;
+
+        $this->userModel->editUser($userId, $newUsername, $newPassword, $newRole);
+        $roles = $this->roleModel->getAllRoles();
+        $users = $this->userModel->getAllUsers();
+
+        require_once __DIR__ . '/../../resources/views/user_view.php';
     }
 }
