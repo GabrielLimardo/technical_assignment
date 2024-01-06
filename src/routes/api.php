@@ -1,65 +1,69 @@
 <?php
 
-require_once __DIR__ . '/../controllers/Auth/AuthController.php';
-require_once __DIR__ . '/../controllers/RolesController.php';
-require_once __DIR__ . '/../controllers/TransactionController.php';
+$baseUri = '/technical_assignment/api';
 
+define('API_REGISTER_ENDPOINT', $baseUri . '/register');
+define('API_LOGIN_ENDPOINT', $baseUri . '/login');
+define('API_CREATE_ROLE_ENDPOINT', $baseUri . '/create-role');
+define('API_ASSIGN_ROLE_ENDPOINT', $baseUri . '/assign-role');
+define('API_CREATE_TRANSACTION_ENDPOINT', $baseUri . '/create-transaction');
+define('API_GET_ALL_TRANSACTIONS_ENDPOINT', $baseUri . '/transactions');
+define('API_GET_TRANSACTIONS_BY_DATE_ENDPOINT', $baseUri . '/transactions-by-date');
+
+require_once __DIR__ . '/../controllers/api/Auth/AuthController.php';
+require_once __DIR__ . '/../controllers/api/RolesController.php';
+require_once __DIR__ . '/../controllers/api/TransactionController.php';
 require_once __DIR__ . '/../Middleware/AuthMiddleware.php';
 
+class Api
+{
+    private $routes = [];
+    private $tokenValidator;
 
-$authController = new AuthController();
-$roleController = new RolesController();
-$transactionController = new TransactionController();
+    public function __construct()
+    {
+        $this->tokenValidator = new AuthMiddleware();
 
-$authController = new AuthController();
-$tokenValidator = new AuthMiddleware();
+        // Define tus rutas aquí
+        $this->routes = [
+            API_REGISTER_ENDPOINT => ['controller' => new AuthController(), 'method' => 'register', 'request_method' => 'POST'],
+            API_LOGIN_ENDPOINT => ['controller' => new AuthController(), 'method' => 'login', 'request_method' => 'POST'],
+            API_CREATE_ROLE_ENDPOINT => ['controller' => new RolesController(), 'method' => 'createRole', 'request_method' => 'POST'],
+            API_ASSIGN_ROLE_ENDPOINT => ['controller' => new RolesController(), 'method' => 'assignRoleToUser', 'request_method' => 'POST'],
+            API_CREATE_TRANSACTION_ENDPOINT => ['controller' => new TransactionController(), 'method' => 'createNewTransaction', 'request_method' => 'POST'],
+            API_GET_ALL_TRANSACTIONS_ENDPOINT => ['controller' => new TransactionController(), 'method' => 'getAllTransactions', 'request_method' => 'GET'],
+            API_GET_TRANSACTIONS_BY_DATE_ENDPOINT => ['controller' => new TransactionController(), 'method' => 'getTransactionsByDate', 'request_method' => 'POST']
+        ];
+    }
 
+    public function handleRequest()
+    {
+        header('Content-Type: application/json');
+        $routeFound = false;
+        $headers = apache_request_headers();
+        $token = $headers['Authorization'] ?? null;
 
-$baseUri = '/technical_assignment';
-
-
-define('REGISTER_ENDPOINT', $baseUri . '/register');
-define('LOGIN_ENDPOINT', $baseUri . '/login');
-define('CREATE_ROLE_ENDPOINT', $baseUri . '/create-role');
-define('ASSIGN_ROLE_ENDPOINT', $baseUri . '/assign-role');
-define('CREATE_TRANSACTION_ENDPOINT', $baseUri . '/create-transaction');
-define('GET_ALL_TRANSACTIONS_ENDPOINT', $baseUri . '/transactions');
-define('GET_TRANSACTIONS_BY_DATE_ENDPOINT', $baseUri . '/transactions-by-date');
-
-$routes = [
-    REGISTER_ENDPOINT => ['controller' => $authController, 'method' => 'register', 'request_method' => 'POST'],
-    LOGIN_ENDPOINT => ['controller' => $authController, 'method' => 'login', 'request_method' => 'POST'],
-    CREATE_ROLE_ENDPOINT => ['controller' => $roleController, 'method' => 'createRole', 'request_method' => 'POST'],
-    ASSIGN_ROLE_ENDPOINT => ['controller' => $roleController, 'method' => 'assignRoleToUser', 'request_method' => 'POST'],
-    CREATE_TRANSACTION_ENDPOINT => ['controller' => $transactionController, 'method' => 'createNewTransaction', 'request_method' => 'POST'],
-    GET_ALL_TRANSACTIONS_ENDPOINT => ['controller' => $transactionController, 'method' => 'getAllTransactions', 'request_method' => 'GET'],
-    GET_TRANSACTIONS_BY_DATE_ENDPOINT => ['controller' => $transactionController, 'method' => 'getTransactionsByDate', 'request_method' => 'POST']
-];
-
-$headers = apache_request_headers();
-$token = $headers['Authorization'] ?? null;
-$routeFound = false;
-header('Content-Type: application/json');
-
-foreach ($routes as $route => $config) {
-    if ($_SERVER['REQUEST_URI'] == $route && $_SERVER['REQUEST_METHOD'] == $config['request_method']) {
-        if (in_array($route, [REGISTER_ENDPOINT, CREATE_ROLE_ENDPOINT, ASSIGN_ROLE_ENDPOINT])) {
-
-           
-            $respuesta = $tokenValidator->validateToken($token);
-            
-            if (!$respuesta) {
-                echo json_encode(['error' => 'Validate fail']);
-                exit;
+        foreach ($this->routes as $route => $config) {
+            if ($_SERVER['REQUEST_URI'] == $route && $_SERVER['REQUEST_METHOD'] == $config['request_method']) {
+                if (in_array($route, [API_REGISTER_ENDPOINT, API_CREATE_ROLE_ENDPOINT, API_ASSIGN_ROLE_ENDPOINT])) {
+                    $isValid = $this->tokenValidator->validateToken($token);
+                    if (!$isValid) {
+                        echo json_encode(['error' => 'Validation failed']);
+                        exit;
+                    }
+                }
+                $response = $config['controller']->{$config['method']}();
+                echo json_encode($response);
+                $routeFound = true;
+                break;
             }
         }
-        $response = $config['controller']->{$config['method']}();
-        $routeFound = true;
-        echo json_encode($response);
-        break;
+
+        if (!$routeFound) {
+            
+            echo json_encode(['error' => 'Route not found']);
+        }
     }
 }
 
-if (!$routeFound) {
-    echo json_encode(['error' => 'Route not found']);
-}
+?>
