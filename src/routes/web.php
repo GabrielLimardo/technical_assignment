@@ -48,29 +48,35 @@ class Web
 
     public function handleRequest()
     {
-        $protectedEndpoints = [
-            GET_USERS_ENDPOINT,
-            EDIT_USERS_ENDPOINT
-        ];
+        try {
 
-        $routeFound = false;
-        if (in_array($_SERVER['REQUEST_URI'], $protectedEndpoints) && !$this->validator->handle()) {
-            header('Location: ' . GET_LOGIN_ENDPOINT);
-            exit;
-        }
+            $protectedEndpoints = [
+                GET_USERS_ENDPOINT,
+                EDIT_USERS_ENDPOINT
+            ];
 
-        foreach ($this->routes as $route => $config) {
-
-            if ($_SERVER['REQUEST_URI'] == $route && $_SERVER['REQUEST_METHOD'] == $config['request_method']) {
-                $response = $config['controller']->{$config['method']}();
-                echo $response;
-                $routeFound = true;
-                break;
+            $routeFound = false;
+            if (in_array($_SERVER['REQUEST_URI'], $protectedEndpoints) && !$this->validator->handle()) {
+                header('Location: ' . GET_LOGIN_ENDPOINT);
+                exit;
             }
-        }
 
-        if (!$routeFound) {
-            echo json_encode(['error' => 'Route not found']);
+            foreach ($this->routes as $route => $config) {
+
+                if ($_SERVER['REQUEST_URI'] == $route && $_SERVER['REQUEST_METHOD'] == $config['request_method']) {
+                    $response = $config['controller']->{$config['method']}();
+                    echo $response;
+                    $routeFound = true;
+                    break;
+                }
+            }
+
+            if (!$routeFound) {
+                echo json_encode(['error' => 'Route not found']);
+            }
+        } catch (\Exception $e) {
+            echo '<div style="color: red; margin-top: 20px;">Error inesperado: ' . $e->getMessage() . '</div>';
+            require_once __DIR__ . '/../../resources/views/error_view.php';
         }
     }
 }

@@ -17,30 +17,38 @@ class RolesController {
     }
 
     public function createRole() {
-        $name = $_POST['name'] ?? null;
-        if ($name === null) {
-            return ['success' => false, 'message' => 'Role name is required.'] ;
-        }
+        try {
+            $name = $_POST['name'] ?? null;
+            if ($name === null) {
+                throw new \Exception('Role name is required.');
+            }
     
-        if ($this->roleModel->create($name)) {
-            return  ['success' => true, 'message' => 'Role successfully created.'];
-        } else {
-            return  ['success' => false, 'message' => 'Failed to create role. Please try again.'];
+            if ($this->roleModel->create($name)) {
+                return ['success' => true, 'message' => 'Role successfully created.'];
+            } else {
+                throw new \Exception('Failed to create role. Please try again.');
+            }
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
     
     public function assignRoleToUser() {
-        $userId = $_POST['userId'] ?? null;
-        $roleId = $_POST['roleId'] ?? null;
+        try {
+            $userId = $_POST['userId'] ?? null;
+            $roleId = $_POST['roleId'] ?? null;
     
-        if ($userId === null || $roleId === null) {
-            return ['success' => false, 'message' => 'User ID and Role ID are required for assignment.'];
-        }
+            if ($userId === null || $roleId === null) {
+                throw new \Exception('User ID and Role ID are required for assignment.');
+            }
     
-        if ($this->userRoleModel->assign($userId, $roleId)) {
-            return ['success' => true, 'message' => 'Role successfully assigned to user.'];
-        } else {
-            return ['success' => false, 'message' => 'Failed to assign role to user. Please check the provided IDs and try again.'];
+            if ($this->userRoleModel->assign($userId, $roleId)) {
+                return ['success' => true, 'message' => 'Role successfully assigned to user.'];
+            } else {
+                throw new \Exception('Failed to assign role to user. Please check the provided IDs and try again.');
+            }
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
         }
-    }
+    }    
 }

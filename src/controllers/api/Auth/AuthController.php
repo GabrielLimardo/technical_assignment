@@ -8,42 +8,61 @@ class AuthController {
     private $userModel;
 
     public function __construct() {
-        $this->userModel = new User(new Database());
+        $db = new Database();
+        $this->userModel = new User($db->getConnection());
     }
 
     public function register() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-            $user_id = $this->userModel->register($username, $password);
-
-            if ($user_id) {
-                $token = $this->userModel->generateToken($user_id);
-                return [
-                    'message' => 'Registration successful.',
-                    'token' => $token
-                ];
-            } else {
-                return ['error' => 'Failed to register.'];
+        try {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $username = $_POST['username'] ?? null;
+                $password = $_POST['password'] ?? null;
+                
+                if ($username === null || $password === null) {
+                    throw new \Exception('Username and password are required.');
+                }
+    
+                $user_id = $this->userModel->register($username, $password);
+    
+                if ($user_id) {
+                    $token = $this->userModel->generateToken($user_id);
+                    return [
+                        'message' => 'Registration successful.',
+                        'token' => $token
+                    ];
+                } else {
+                    throw new \Exception('Failed to register.');
+                }
             }
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
         }
     }
-
+    
     public function login() {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-
-            $user_id = $this->userModel->login($username, $password);
-            if ($user_id) {
-                $token = $this->userModel->generateToken($user_id);
-                return [
-                    'message' => 'Login successful..',
-                    'token' => $token
-                ];
-            } else {
-                return ['error' => 'Incorrect credentials.'];
+        try {
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $username = $_POST['username'] ?? null;
+                $password = $_POST['password'] ?? null;
+    
+                if ($username === null || $password === null) {
+                    throw new \Exception('Username and password are required.');
+                }
+    
+                $user_id = $this->userModel->login($username, $password);
+                
+                if ($user_id) {
+                    $token = $this->userModel->generateToken($user_id);
+                    return [
+                        'message' => 'Login successful.',
+                        'token' => $token
+                    ];
+                } else {
+                    throw new \Exception('Incorrect credentials.');
+                }
             }
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
         }
-    }
+    }    
 }

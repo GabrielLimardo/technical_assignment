@@ -12,49 +12,65 @@ class loginController {
 
     public function __construct() {
         $db = new Database(); 
-        $this->userModel = new User($db);
+        $this->userModel = new User($db->getConnection());
         $this->transactionModel = new Transaction($db->getConnection());
 
     }
 
     public function index() {
-        require_once __DIR__ . '/../../../resources/views/auth/login_view.php';
+        try {
+            require_once __DIR__ . '/../../../resources/views/auth/login_view.php';
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            require_once __DIR__ . '/../../resources/views/error_view.php';
+        }
     }
     
     public function login() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
-
-            $user_id = $this->userModel->login($username, $password);
-
-
-            if ($user_id) {
-                $_SESSION['user_id'] = $user_id;
-                $_SESSION['username'] = $username;
-
-                $transactions = $this->transactionModel->getAllTransactions();
-                require_once __DIR__ . '/../../../resources/views/index_view.php';
-
-            } else {
-                require_once __DIR__ . '/../../../resources/views/auth/login_view.php';
+        try {
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
             }
-        }
-    }
+    
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $username = $_POST['username'] ?? null;
+                $password = $_POST['password'] ?? null;
+    
+                if (!$username || !$password) {
+                    throw new \Exception('Username or password is missing.');
+                }
+    
+                $user_id = $this->userModel->login($username, $password);
+    
+                if ($user_id) {
+                    $_SESSION['user_id'] = $user_id;
+                    $_SESSION['username'] = $username;
+                    $transactions = $this->transactionModel->getAllTransactions();
+                    require_once __DIR__ . '/../../../resources/views/index_view.php';
+                } else {
+                    require_once __DIR__ . '/../../../resources/views/auth/login_view.php';
+                }
+            }
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            require_once __DIR__ . '/../../resources/views/error_view.php';
 
-    public function logout() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
         }
-    
-        session_unset();
-    
-        session_destroy();
-    
-        header('Location: /technical_assignment/login');
-        exit;
     }
+    
+    public function logout() {
+        try {
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+    
+            session_unset();
+            session_destroy();
+            header('Location: /technical_assignment/login');
+            exit;
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            require_once __DIR__ . '/../../resources/views/error_view.php';
+        }
+    }    
 }

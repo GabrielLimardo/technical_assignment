@@ -18,14 +18,14 @@ class User {
         }
     
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->db->getConnection()->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
+        $stmt = $this->db->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
         $stmt->execute([$username, $hashedPassword]);
-        $userId = $this->db->getConnection()->lastInsertId();
+        $userId = $this->db->lastInsertId();
         return $userId;
     }
     
     public function login($username, $password) {
-        $stmt = $this->db->getConnection()->prepare("
+        $stmt = $this->db->prepare("
         SELECT u.*, r.name as role_name
         FROM users u
         JOIN user_roles ur ON u.id = ur.user_id
@@ -58,9 +58,9 @@ class User {
         $existingToken = $this->getExistingTokenByUserId($userId);
 
         if ($existingToken) {
-            $stmt = $this->db->getConnection()->prepare('UPDATE tokens SET token = :token, expires_at = :expires_at WHERE user_id = :user_id');
+            $stmt = $this->db->prepare('UPDATE tokens SET token = :token, expires_at = :expires_at WHERE user_id = :user_id');
         } else {
-            $stmt = $this->db->getConnection()->prepare('INSERT INTO tokens (user_id, token, expires_at) VALUES (:user_id, :token, :expires_at)');
+            $stmt = $this->db->prepare('INSERT INTO tokens (user_id, token, expires_at) VALUES (:user_id, :token, :expires_at)');
         }
 
         $stmt->execute([
@@ -73,13 +73,13 @@ class User {
     }
 
     private function getExistingTokenByUserId($userId) {
-        $stmt = $this->db->getConnection()->prepare('SELECT token FROM tokens WHERE user_id = :user_id');
+        $stmt = $this->db->prepare('SELECT token FROM tokens WHERE user_id = :user_id');
         $stmt->execute([':user_id' => $userId]);
         return $stmt->fetchColumn();
     }
 
     public function getAllUsers() {
-        $stmt = $this->db->getConnection()->query("
+        $stmt = $this->db->query("
         SELECT u.*, r.name as role 
         FROM users u 
         JOIN user_roles ru ON u.id = ru.user_id 
@@ -89,7 +89,7 @@ class User {
     }
 
     public function getUserById($userId) {
-        $stmt = $this->db->getConnection()->prepare("
+        $stmt = $this->db->prepare("
             SELECT u.*, r.name as role 
             FROM users u 
             JOIN user_roles ru ON u.id = ru.user_id 
@@ -107,7 +107,7 @@ class User {
         }
 
         $sql = "UPDATE users SET username = :username, password = :password WHERE id = :id";
-        $stmt = $this->db->getConnection()->prepare($sql);
+        $stmt = $this->db->prepare($sql);
         
         $stmt->bindParam(':username', $newUsername, PDO::PARAM_STR);
         $stmt->bindParam(':password', $newPassword, PDO::PARAM_STR);
@@ -117,7 +117,7 @@ class User {
         $stmt->closeCursor();
         
         $sqlUpdateRole = "UPDATE user_roles SET role_id = :role WHERE user_id = :id";
-        $stmtUpdateRole = $this->db->getConnection()->prepare($sqlUpdateRole);
+        $stmtUpdateRole = $this->db->prepare($sqlUpdateRole);
         
         $stmtUpdateRole->bindParam(':role', $newRol, PDO::PARAM_STR);
         $stmtUpdateRole->bindParam(':id', $userId, PDO::PARAM_INT);
