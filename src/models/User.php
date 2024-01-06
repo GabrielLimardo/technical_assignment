@@ -115,34 +115,5 @@ class User {
         
         $stmtUpdateRole->execute();
         $stmtUpdateRole->closeCursor();
-
-        // $stmts = [];
-        // $params = [];
-    
-        // if ($newPassword!=NULL) {
-        //     $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        //     $stmts[] = "UPDATE users SET password = ? WHERE id = ?";
-        //     $params[] = $hashedPassword;
-        //     $params[] = $userId;
-        // }
-        // if ($newUsername!=NULL) {
-        //     $stmts[] = "UPDATE users SET username = ? WHERE id = ?";
-        //     $params[] = $newUsername;
-        //     $params[] = $userId;
-        // }
-        // if ($newRol!=NULL) {
-        //     $stmts[] = "UPDATE user_roles SET role_id = (SELECT id FROM roles WHERE name = ?) WHERE user_id = ?";
-        //     $params[] = $newRol;
-        //     $params[] = $userId;
-        // }
-
-        // $this->db->getConnection()->beginTransaction();
-
-        // foreach ($stmts as $index => $sql) {
-        //     $stmt = $this->db->getConnection()->prepare($sql);
-        // }
-
-        // $this->db->getConnection()->commit();
-        // return true;
     }      
 }
