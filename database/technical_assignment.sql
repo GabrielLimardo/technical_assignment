@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS technical_assignment;
+CREATE DATABASE IF NOT EXISTS prueba;
 
-USE technical_assignment;
+USE prueba;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -42,4 +42,4 @@ CREATE TABLE IF NOT EXISTS user_roles (
     FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
-INSERT IGNORE INTO roles (id, name) VALUES (1, 'client'), (2, 'admin');
+INSERT IGNORE INTO roles (id, name) VALUES (1, 'admin'), (2, 'client');
