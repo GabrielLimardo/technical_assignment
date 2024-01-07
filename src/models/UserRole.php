@@ -13,5 +13,4 @@ class UserRole {
         $stmt->bindParam(':roleId', $roleId);
         return $stmt->execute();
     }
-
 }
