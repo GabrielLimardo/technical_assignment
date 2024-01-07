@@ -74,7 +74,14 @@
 <a href="/technical_assignment/transaction" class="button">Create Transaction</a>
 
 
+
 <h1>Transactions Table</h1>
+
+<?php if (isset($dateFrom) && isset($dateTo)): ?>
+    <div>
+        <h2>Filtered Transactions from <?php echo htmlspecialchars($dateFrom, ENT_QUOTES, 'UTF-8'); ?> to <?php echo htmlspecialchars($dateTo, ENT_QUOTES, 'UTF-8'); ?>:</h2>
+    </div>
+<?php endif; ?>
 
 <table>
     <thead>
@@ -100,6 +107,8 @@
 </table>
 
 <h3>Final Balance: <?php echo htmlspecialchars($transactions['balance'], ENT_QUOTES, 'UTF-8'); ?></h3>
+
+
 
 <a href="/technical_assignment/home" class="button clear-button">Clear Filter</a>
 

@@ -3,13 +3,17 @@
 require_once __DIR__ . '/../../../config/Database.php';
 require_once __DIR__ . '/../../../config/config.php';
 require_once __DIR__ . '/../../models/Transaction.php';
+require_once __DIR__ . '/../../services/TransactionService.php';
 
 class TransactionController {
     private $transactionModel;
+    protected $transactionService;
+
 
     public function __construct() {
         $db = new Database(); 
         $this->transactionModel = new Transaction($db->getConnection());
+        $this->transactionService = new TransactionService($this->transactionModel);
     }
 
     public function createNewTransaction() {
@@ -21,23 +25,7 @@ class TransactionController {
             $description = $_POST['description'] ?? null;
             $userId = $this->transactionModel->getUserIdFromUsername($username);
     
-            if (!$userId ) {
-                throw new \Exception('Username used is not correct.');
-            }
-
-            if (!$type || !$amount || !$date) {
-                throw new \Exception('Required parameters are missing for creating a new transaction.');
-            }
-
-            if ($type === 'income') {
-                $amount = abs($amount);
-            } elseif ($type === 'expense') {
-                $amount = -abs($amount);
-            } else {
-                throw new \Exception('Invalid transaction type.');
-            }
-    
-            if ($this->transactionModel->createTransaction($userId, $type, $amount, $date, $description)) {
+            if ($this->transactionService->createNewTransaction($username, $type, $amount, $date, $description)) {
                 return ['success' => true, 'message' => 'Transaction successfully created.'];
             } else {
                 throw new \Exception('Failed to create transaction. Please try again.');
@@ -66,11 +54,7 @@ class TransactionController {
             $dateFrom = $_POST['dateFrom'] ?? null;
             $dateTo = $_POST['dateTo'] ?? null;
     
-            if (!$dateFrom || !$dateTo) {
-                throw new \Exception('Both start and end dates are required to fetch transactions by date range.');
-            }
-    
-            $transactions = $this->transactionModel->getTransactionsByDate($dateFrom, $dateTo);
+            $transactions = $this->transactionService->handleDateFilter($dateFrom, $dateTo);
             
             if ($transactions) {
                 return ['success' => true, 'data' => $transactions];
