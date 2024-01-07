@@ -31,6 +31,10 @@ class loginController {
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
+
+            if (isset($_SESSION['login_attempts']) && $_SESSION['login_attempts'] > 5) {
+                throw new \Exception('Too many failed attempts. Please try again later.');
+            }
     
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $username = $_POST['username'] ?? null;
@@ -54,7 +58,8 @@ class loginController {
         } catch (\Exception $e) {
             $errorMessage = $e->getMessage();
             require_once __DIR__ . '/../../resources/views/error_view.php';
-
+            $_SESSION['login_attempts'] = $_SESSION['login_attempts'] ?? 0;
+            $_SESSION['login_attempts']++;
         }
     }
     

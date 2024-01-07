@@ -37,30 +37,33 @@ class Api
 
     public function handleRequest()
     {
-        header('Content-Type: application/json');
-        $routeFound = false;
-        $headers = apache_request_headers();
-        $token = $headers['Authorization'] ?? null;
+        try {
+            header('Content-Type: application/json');
+            $routeFound = false;
+            $headers = apache_request_headers();
+            $token = $headers['Authorization'] ?? null;
 
-        foreach ($this->routes as $route => $config) {
-            if ($_SERVER['REQUEST_URI'] == $route && $_SERVER['REQUEST_METHOD'] == $config['request_method']) {
-                if (in_array($route, [API_REGISTER_ENDPOINT, API_CREATE_ROLE_ENDPOINT, API_ASSIGN_ROLE_ENDPOINT])) {
-                    $isValid = $this->tokenValidator->validateToken($token);
-                    if (!$isValid) {
-                        echo json_encode(['error' => 'Validation failed']);
-                        exit;
+            foreach ($this->routes as $route => $config) {
+                if ($_SERVER['REQUEST_URI'] == $route && $_SERVER['REQUEST_METHOD'] == $config['request_method']) {
+                    if (in_array($route, [API_REGISTER_ENDPOINT, API_CREATE_ROLE_ENDPOINT, API_ASSIGN_ROLE_ENDPOINT])) {
+                        $isValid = $this->tokenValidator->validateToken($token);
+                        if (!$isValid) {
+                            echo json_encode(['error' => 'Validation failed']);
+                            exit;
+                        }
                     }
+                    $response = $config['controller']->{$config['method']}();
+                    echo json_encode($response);
+                    $routeFound = true;
+                    break;
                 }
-                $response = $config['controller']->{$config['method']}();
-                echo json_encode($response);
-                $routeFound = true;
-                break;
             }
-        }
 
-        if (!$routeFound) {
-            
-            echo json_encode(['error' => 'Route not found']);
+            if (!$routeFound) {
+                echo json_encode(['error' => 'Route not found']);
+            }
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
         }
     }
 }

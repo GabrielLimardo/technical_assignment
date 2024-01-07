@@ -72,7 +72,7 @@ class Web
             }
 
             if (!$routeFound) {
-                echo json_encode(['error' => 'Route not found']);
+                header('Location:/technical_assignment/home');
             }
         } catch (\Exception $e) {
             echo '<div style="color: red; margin-top: 20px;">Error inesperado: ' . $e->getMessage() . '</div>';
