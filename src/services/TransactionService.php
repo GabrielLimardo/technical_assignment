@@ -8,7 +8,7 @@ class TransactionService {
         $this->transactionModel = $transactionModel;
     }
 
-    public function createNewTransaction($username, $type, $amount, $date, $description) {
+    public function createNewTransaction(string $username, string $type, float $amount, string $date, ?string $description = null): bool {
         $userId = $this->transactionModel->getUserIdFromUsername($username);
 
         if (!$userId) {
@@ -30,7 +30,7 @@ class TransactionService {
         return $this->transactionModel->createTransaction($userId, $type, $amount, $date, $description);
     }
 
-    public function handleDateFilter($dateFrom, $dateTo) {
+    public function handleDateFilter(string $dateFrom, string $dateTo): array {
         if (!$dateFrom || !$dateTo) {
             throw new \Exception('Date range parameters are missing.');
         }

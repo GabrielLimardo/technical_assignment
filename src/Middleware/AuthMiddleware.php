@@ -17,8 +17,7 @@ class AuthMiddleware
         $this->db = $db->getConnection();
     }
 
-    public function validateToken($token)
-    {
+    public function validateToken(string $token): bool {
         try {
             $decoded = JWT::decode($token, new Key(SECRET_KEY, 'HS256'));
             $currentTimestamp = time();
@@ -37,8 +36,7 @@ class AuthMiddleware
         }
     }
 
-    private function isAdmin($userId)
-    {
+    private function isAdmin(int $userId): bool {
         $stmt = $this->db->prepare("
             SELECT r.name 
             FROM user_roles ur 
@@ -52,8 +50,7 @@ class AuthMiddleware
         return $stmt->fetch() ? true : false;
     }
 
-    public function handle()
-    {
+    public function handle(): bool {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }

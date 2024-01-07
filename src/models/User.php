@@ -11,7 +11,7 @@ class User {
         $this->db = $db;
     }
 
-    public function register($username, $password) {
+    public function register(string $username,string $password): int {
         
         if (strlen($password) < 8) {
             throw new Exception("La contraseña debe tener al menos 8 caracteres.");
@@ -24,7 +24,7 @@ class User {
         return $userId;
     }
     
-    public function login($username, $password) {
+    public function login(string $username,string $password) {
         $stmt = $this->db->prepare("
         SELECT u.*, r.name as role_name
         FROM users u
@@ -42,7 +42,7 @@ class User {
         return false;
     }
 
-    public function generateToken($userId) {
+    public function generateToken(int $userId): string {
         $key = SECRET_KEY;
         $payload = [
             "iss" => SECRET_KEY,
@@ -72,13 +72,13 @@ class User {
         return $jwt;
     }
 
-    private function getExistingTokenByUserId($userId) {
+    private function getExistingTokenByUserId(int $userId): ?string {
         $stmt = $this->db->prepare('SELECT token FROM tokens WHERE user_id = :user_id');
         $stmt->execute([':user_id' => $userId]);
         return $stmt->fetchColumn();
     }
 
-    public function getAllUsers() {
+    public function getAllUsers(): array {
         $stmt = $this->db->query("
         SELECT u.*, r.name as role 
         FROM users u 
@@ -88,7 +88,7 @@ class User {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function getUserById($userId) {
+    public function getUserById(int $userId): array {
         $stmt = $this->db->prepare("
             SELECT u.*, r.name as role 
             FROM users u 
@@ -100,8 +100,8 @@ class User {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function editUser($userId, $newUsername, $newPassword, $newRol) {
-
+    public function editUser(int $userId, string $newUsername, string $newPassword, string $newRol): void
+    {
         if (strlen($newPassword) < 8) {
             throw new Exception("La contraseña debe tener al menos 8 caracteres.");
         }

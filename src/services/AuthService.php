@@ -10,7 +10,7 @@ class AuthService {
         $this->transactionModel = $transactionModel;
     }
 
-    public function register() {
+    public function register(): array {
         try {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $username = $_POST['username'] ?? null;
@@ -37,7 +37,7 @@ class AuthService {
         }
     }
 
-    public function logout() {
+    public function logout(): void {
         try {
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
@@ -53,7 +53,7 @@ class AuthService {
         }
     }
 
-    public function login() {
+    public function login(): ?array {
         try {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $username = $_POST['username'] ?? null;
@@ -80,7 +80,7 @@ class AuthService {
         }
     }
 
-    public function sessionLogin() {
+    public function sessionLogin(): void {
         try {
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();

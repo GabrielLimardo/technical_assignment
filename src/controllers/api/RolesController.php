@@ -9,7 +9,6 @@ class RolesController {
     private $roleModel;
     private $userRoleModel;
 
-
     public function __construct() {
         $db = new Database(); 
         $this->roleModel = new Role($db->getConnection());

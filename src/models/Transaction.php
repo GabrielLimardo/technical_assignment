@@ -7,7 +7,7 @@ class Transaction {
         $this->db = $db;
     }
 
-    public function getAllTransactions() {
+    public function getAllTransactions(): array {
         $stmt = $this->db->prepare("SELECT * FROM transactions");
         $stmt->execute();
         $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -25,7 +25,7 @@ class Transaction {
         return $result;
     }
 
-    public function getTransactionsByDate($dateFrom, $dateTo) {
+    public function getTransactionsByDate(string  $dateFrom,string  $dateTo): array {
         $stmt = $this->db->prepare("SELECT * FROM transactions WHERE date BETWEEN :dateFrom AND :dateTo");
         $stmt->bindParam(':dateFrom', $dateFrom);
         $stmt->bindParam(':dateTo', $dateTo);
@@ -45,7 +45,7 @@ class Transaction {
         return $result;
     }
 
-    public function createTransaction($userId, $type, $amount, $date, $description = null) {
+    public function createTransaction(int $userId, string $type, float $amount, string $date, ?string $description = null): bool {
         $stmt = $this->db->prepare("INSERT INTO transactions (user_id, type, amount, date, description) VALUES (:userId, :type, :amount, :date, :description)");
         $stmt->bindParam(':userId', $userId);
         $stmt->bindParam(':type', $type);
@@ -56,7 +56,7 @@ class Transaction {
         return $stmt->execute();
     }
 
-    public function getUserIdFromUsername($username) {
+    public function getUserIdFromUsername(string $username): ?int {
         $stmt = $this->db->prepare("SELECT id FROM users WHERE username = :username");
         $stmt->bindParam(':username', $username);
         $stmt->execute();
