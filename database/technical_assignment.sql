@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     date DATE NOT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)  
+    FOREIGN KEY (user_id) REFERENCES users(id) 
 );
 
 CREATE TABLE IF NOT EXISTS tokens (
@@ -37,9 +37,9 @@ CREATE TABLE IF NOT EXISTS roles (
 CREATE TABLE IF NOT EXISTS user_roles (
     user_id INT NOT NULL,
     role_id INT NOT NULL,
-    PRIMARY KEY (user_id, role_id),  
-    FOREIGN KEY (user_id) REFERENCES users(id),  
-    FOREIGN KEY (role_id) REFERENCES roles(id)  
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,  -- Añadido ON DELETE CASCADE
+    FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
 INSERT IGNORE INTO roles (id, name) VALUES (1, 'client'), (2, 'admin');

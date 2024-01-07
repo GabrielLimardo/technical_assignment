@@ -11,6 +11,8 @@ define('GET_CREATE_TRANSACTION_ENDPOINT', $baseUri . '/transaction');
 define('CREATE_TRANSACTION_ENDPOINT', $baseUri . '/transaction_form');
 define('GET_USERS_ENDPOINT', $baseUri . '/users');
 define('EDIT_USERS_ENDPOINT', $baseUri . '/users_form');
+define('GENERATE_REPORT', $baseUri . '/generate-report');
+
 
 require_once __DIR__ . '/../controllers/indexController.php';
 require_once __DIR__ . '/../controllers/TransactionsController.php';
@@ -43,6 +45,7 @@ class Web
             CREATE_TRANSACTION_ENDPOINT => ['controller' => new TransactionsController(), 'method' => 'createNewTransaction', 'request_method' => 'POST'],
             GET_USERS_ENDPOINT => ['controller' => new usersController(), 'method' => 'index', 'request_method' => 'GET'],
             EDIT_USERS_ENDPOINT => ['controller' => new usersController(), 'method' => 'edit', 'request_method' => 'POST'],
+            GENERATE_REPORT => ['controller' => new IndexController(), 'method' => 'generateBalance', 'request_method' => 'GET'],
         ];
     }
 

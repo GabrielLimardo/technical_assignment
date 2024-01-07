@@ -72,6 +72,7 @@
 <?php endif; ?>
 
 <a href="/technical_assignment/transaction" class="button">Create Transaction</a>
+<a href="/technical_assignment/generate-report" class="button">Generate Report</a>
 
 
 

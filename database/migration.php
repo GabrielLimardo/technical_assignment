@@ -12,8 +12,8 @@ try {
 
     $pdo->exec($sql);
 
-    return "Migration completed successfully.\n";
+    var_dump("Migration completed successfully.\n");
 
 } catch (PDOException $e) {
-    return "Error during migration: " . $e->getMessage();
+    var_dump("Error during migration: " . $e->getMessage());
 }

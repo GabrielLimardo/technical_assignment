@@ -40,4 +40,14 @@ class indexController {
             require_once __DIR__ . '/../../resources/views/error_view.php';
         }
     }
+
+    public function generateBalance() {
+        try {
+              return $this->transactionModel->generateBalancePdf();
+
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            require_once __DIR__ . '/../../resources/views/error_view.php';
+        }
+    }
 }
