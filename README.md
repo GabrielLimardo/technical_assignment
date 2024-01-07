@@ -10,10 +10,13 @@ The main objective of this project is to develop a CRUD system with authenticati
 - Libraries:
   - PHPUnit for unit testing.
   - JWT for authentication purposes.
+  - TCPDF for pdf report.
 - Database: No ORM was used to handle database operations, aiming to mitigate potential SQL Injection vulnerabilities.
 
-## Security Features
+## Application Details
 
+- Web application and Api
+- Automated tests of the main classes.
 - Blocking after multiple failed attempts.
 - Limitation enforcing a minimum password length of 8 characters.
 - Error Handling: During a debugging stage, error messages are exposed. However, in a deployment environment, these messages will not be displayed to prevent vulnerabilities.
@@ -56,6 +59,11 @@ This adjustment ensures that users are prompted to manually create the `technica
 9. Additionally, to interact with the project's API, you can use the following route:
    ```
    http://localhost/technical_assignment/api
+   ```
+
+10. To run the automated tests run the following command:
+   ```
+   ./vendor/bin/phpunit
    ```
 
 ![image](https://github.com/GabrielLimardo/technical_assignment/assets/60992367/64806a8a-77a8-40b3-97dd-0fe37800857b)
