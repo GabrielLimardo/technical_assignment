@@ -86,23 +86,42 @@ class Transaction {
         $content = "<h1>Balance Report</h1>\n\n";
         $content .= "<br>";
     
+        $totalIncome = 0;
+        $totalExpense = 0;
+
         foreach ($transactions as $transaction) {
             $content .= "Type: " . ucfirst($transaction['type']) . "\n";
             $content .= "Amount: " . $transaction['amount'] . "\n";
             $content .= "Description: " . $transaction['description'] . "\n";
             $content .= "Date: " . $transaction['date'] . "\n";
-            $content .= "<br>"; // Agrega un salto de línea después de cada transacción
-    
+            $content .= "<br>";
+
             if ($transaction['type'] === 'income') {
-                $totalBalance += $transaction['amount'];
+                $totalIncome += $transaction['amount'];
             } elseif ($transaction['type'] === 'expense') {
-                $totalBalance -= $transaction['amount'];
+                $totalExpense += $transaction['amount'];
             }
         }
+
+        $totalBalance = $totalIncome - $totalExpense;
+            
+        $content .= "\nTotal Balance: $totalBalance\n\n"; 
+        $total = $totalIncome + abs($totalExpense);
+
+        $income_percentage = round(($totalIncome / $total) * 100, 1);
+        $expense_percentage = round((abs($totalExpense) / $total) * 100, 1);
+
+        $html = '
+        <table border="0" cellpadding="5" cellspacing="0">
+            <tr>
+                <td width="' . $income_percentage . '%" bgcolor="#00FF00">Income (' . $income_percentage . '%) - Income Total: ' . $totalIncome . ' </td>  <!-- Verde -->
+                <td width="' . $expense_percentage . '%" bgcolor="#FF0000">Expense (' . $expense_percentage . '%) - Expense Total:' . abs($totalExpense) . ' </td>  <!-- Rojo -->
+            </tr>
+        </table>
+        ';
     
-        $content .= "\nTotal Balance: $totalBalance\n\n"; // Agrega el balance total al final
-    
-        
+        $pdf->writeHTML($html, true, false, true, false, '');
+
         $pdf->writeHTML($content, true, false, true, false, '');
     
         $pdf->Output('balance_report.pdf', 'I');
