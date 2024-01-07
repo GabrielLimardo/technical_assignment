@@ -10,7 +10,7 @@ class AuthService {
         $this->transactionModel = $transactionModel;
     }
 
-    public function register(): array {
+    public function register(): ?array {
         try {
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $username = $_POST['username'] ?? null;

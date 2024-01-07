@@ -17,11 +17,11 @@ class AuthMiddleware
         $this->db = $db->getConnection();
     }
 
-    public function validateToken(string $token): bool {
+    public function validateToken(?string $token): bool {
         try {
             $decoded = JWT::decode($token, new Key(SECRET_KEY, 'HS256'));
             $currentTimestamp = time();
-            
+
             if ($decoded->exp < $currentTimestamp) {
                 throw new \Exception("Token has expired");
             }
@@ -31,6 +31,7 @@ class AuthMiddleware
             }
 
             return true;
+
         } catch (\Exception $e) {
             throw new \Exception("Error validating token: " . $e->getMessage());
         }
@@ -50,7 +51,7 @@ class AuthMiddleware
         return $stmt->fetch() ? true : false;
     }
 
-    public function handle(): bool {
+    public function handle(): ?bool {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
