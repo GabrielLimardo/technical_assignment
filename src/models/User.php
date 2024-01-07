@@ -14,7 +14,7 @@ class User {
     public function register(string $username,string $password): int {
         
         if (strlen($password) < 8) {
-            throw new Exception("La contraseña debe tener al menos 8 caracteres.");
+            throw new Exception("The password must be at least 8 characters.");
         }
     
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
