@@ -29,16 +29,19 @@ The main objective of this project is to develop a CRUD system with authenticati
 
 3. Start Apache and MySQL through XAMPP.
 
-4. Once XAMPP is running, access [http://localhost/phpmyadmin/index.php?route=/](http://localhost/phpmyadmin/index.php?route=/) to manage your databases.
-
-5. Create a new database named `technical_assignment` in phpMyAdmin.
-
-6. Return to the project root and execute the following command to migrate all necessary tables:
+4. Return to the project root and execute the following command to migrate all necessary tables:
    ```
    php database/migration.php
    ```
    This will set up the database structure with all the required tables.
 
+5. If for any reason the database `technical_assignment` isn't created automatically, ensure XAMPP is running and then access [http://localhost/phpmyadmin/index.php?route=/](http://localhost/phpmyadmin/index.php?route=/) to manage your databases.
+
+6. Once in phpMyAdmin, create a new database named `technical_assignment` and do again the `php database/migration.php`.
+
+
+This adjustment ensures that users are prompted to manually create the `technical_assignment` database in phpMyAdmin if it wasn't automatically created during the migration process.
+   
 7. After the tables have been created, run the following command to populate the database with predefined users, roles, and transactions:
    ```
    php database/seeder.php
