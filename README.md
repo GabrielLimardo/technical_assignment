@@ -2,7 +2,7 @@
 
 ## Project Objective
 
-The main objective of this project is to develop a CRUD system with authentication capabilities. The system will allow for the addition of clients and the management of their expenses/earnings. Additionally, it will provide the functionality to generate a report that showcases the balance and movements over a specified time frame or overall. Authentication is designated for "admins" who will have the ability to create and view clients. However, clients themselves will not require authentication or access to the system.
+The main objective of this project is to develop a CRUD system with authentication capabilities without any type of framework with only PHP vanilla or libraries only with PHP vanilla. The system will allow the incorporation of clients and the management of their expenses/income. Additionally, it will provide the functionality to generate a report showing the balance and movements over a specific time period or overall. Authentication is designed for "administrators" who will have the ability to create and view clients. However, the clients themselves will not require authentication or access to the system.
 
 ## Technologies Used
 
