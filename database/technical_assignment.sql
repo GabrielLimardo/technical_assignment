@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS prueba;
+CREATE DATABASE IF NOT EXISTS technical_assignment;
 
-USE prueba;
+USE technical_assignment;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
